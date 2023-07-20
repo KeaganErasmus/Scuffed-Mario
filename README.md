@@ -1,2 +1,2 @@
 # Scuffed-Mario
-Mario created in pygame
+Tried to create Mario in pygame as a learning experience
