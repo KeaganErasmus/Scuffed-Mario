@@ -1,2 +1,2 @@
 # Scuffed-Mario
-Tried to create Mario in pygame as a learning experience
+Tried to create Mario in Python using Pygame-ce as a learning experience
