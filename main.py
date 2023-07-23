@@ -23,8 +23,10 @@ def main():
     anim_cd = 250
     frame = 0
         
-    cam_pos = [0, 0]
+    cam_pos = pygame.math.Vector2()
     direction = "none"
+
+    level1 = level_sheet.load_image("data/bg-1-1.png")
 
     # Load all the sprites states (idle, run, jump, dead)
     # and the sprites that match
@@ -63,8 +65,11 @@ def main():
             state = 0
             frame = 0
 
+        cam_pos.x = player_rec.centerx - screen.get_width() // 2
+        cam_pos.y = player_rec.centery - screen.get_height() // 2
+        level_offset = player_rec.topleft + cam_pos
         # Render sprite
-        screen.blit(level_sheet.load_image("data/bg-1-1.png"), (0,0))
+        screen.blit(level1, (0 - level_offset.x ,0))
         pygame.draw.rect(screen, "red", player_rec)
 
         if direction == "right":
