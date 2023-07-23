@@ -1,10 +1,11 @@
 import pygame
 from load_assets import *
 
-sheet = Load_assets("mario_sheet.png")
+mario_sheet = Load_assets("mario_sheet.png")
+level_sheet = Load_assets("bg-1-1.png")
 
 player_speed = 3
-player_pos = [300, 200]
+player_pos = [300, 192]
 
 def main():
     pygame.init()
@@ -20,7 +21,7 @@ def main():
     last_update = pygame.time.get_ticks()
     anim_cd = 250
     frame = 0
-    
+        
     direction = "none"
 
     # Load all the sprites states (idle, run, jump, dead)
@@ -28,12 +29,12 @@ def main():
     for anim in anim_step:
         temp_sprite_list = []
         for _ in range(anim):
-            temp_sprite_list.append(sheet.get_sprites(step_count, 16, 16, 3))
+            temp_sprite_list.append(mario_sheet.get_sprites(step_count, 16, 16, 1))
             step_count += 1
         mario_sprites.append(temp_sprite_list)
 
     while running:
-        player_rec = pygame.Rect(player_pos[0], player_pos[1], 48, 48)
+        player_rec = pygame.Rect(player_pos[0], player_pos[1], 16, 16)
         screen.fill((255,255,255))
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
@@ -60,15 +61,17 @@ def main():
             state = 0
             frame = 0
 
-
         # Render sprite
+        screen.blit(level_sheet.load_image("data/bg-1-1.png"), (0,0))
+        pygame.draw.rect(screen, "red", player_rec)
+
         if direction == "right":
             screen.blit(mario_sprites[state][frame], (player_pos[0], player_pos[1]))
         elif direction == "left":
             screen.blit(pygame.transform.flip(mario_sprites[state][frame], True, False), (player_pos[0], player_pos[1]))
         else:
             screen.blit(mario_sprites[state][frame], (player_pos[0], player_pos[1]))
-        
+
 
         pygame.display.update()
         clock.tick(60)
