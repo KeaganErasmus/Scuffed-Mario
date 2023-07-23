@@ -4,16 +4,17 @@ from load_assets import *
 mario_sheet = Load_assets("mario_sheet.png")
 level_sheet = Load_assets("bg-1-1.png")
 
-player_speed = 3
-player_pos = [300, 192]
 
 def main():
     pygame.init()
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((600, 400))
+    level = [4000, 500]
     pygame.display.set_caption("Scuffed mario")
     running = True
 
+    player_speed = 3
+    player_pos = [300, 192]
     mario_sprites = []
     anim_step = [3, 3, 6, 1]
     step_count = 0
@@ -22,6 +23,7 @@ def main():
     anim_cd = 250
     frame = 0
         
+    cam_pos = [0, 0]
     direction = "none"
 
     # Load all the sprites states (idle, run, jump, dead)
@@ -71,6 +73,9 @@ def main():
             screen.blit(pygame.transform.flip(mario_sprites[state][frame], True, False), (player_pos[0], player_pos[1]))
         else:
             screen.blit(mario_sprites[state][frame], (player_pos[0], player_pos[1]))
+
+        # stop the player from moving off screen
+        # player_pos[0] = max(0, min(player_pos[0], screen.get_width() - 16))
 
 
         pygame.display.update()
