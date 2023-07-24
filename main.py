@@ -1,10 +1,31 @@
 import pygame
+import json
+
 from load_assets import *
 from blocks import *
+
+TILE_SIZE = 16
 
 mario_sheet = Load_assets("mario_sheet.png")
 level_sheet = Load_assets("bg-1-1.png")
 
+f = open("data/world.tmj")
+data = json.load(f)
+f.close()
+
+game_map = [['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','2','2','2','2','2','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['2','2','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','2','2'],
+            ['1','1','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1']]
 
 def main():
     pygame.init()
@@ -13,6 +34,8 @@ def main():
     level = [4000, 500]
     pygame.display.set_caption("Scuffed mario")
     running = True
+
+    DEBUG_MODE = False
 
     player_speed = 3
     player_pos = [300, 192]
@@ -74,9 +97,7 @@ def main():
 
 
         # Render sprite
-        screen.blit(level1, (0 - level_offset.x ,0))
-        pygame.draw.rect(screen, "red", player_rec)
-
+        # screen.blit(level1, (0 - level_offset.x ,0))
         if direction == "right":
             screen.blit(mario_sprites[state][frame], (player_pos[0], player_pos[1]))
         elif direction == "left":
@@ -87,11 +108,36 @@ def main():
         # stop the player from moving off screen
         player_pos[0] = max(0, min(player_pos[0], level1.get_width()))
 
+        tile_rects = []
+        y = 0
+        for row in game_map:
+            x = 0
+            for col in row:
+                if col == '1':
+                    screen.blit(brick, ((x * TILE_SIZE), (y * TILE_SIZE)))
+                if col == '2':
+                    screen.blit(b_block, ((x * TILE_SIZE), (y * TILE_SIZE)))
+                if col != 0:
+                    tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+                x += 1
+            y += 1
 
+        # render all debug info
+        if keys[pygame.K_m]:
+            DEBUG_MODE = True
+        elif keys[pygame.K_n]:
+            DEBUG_MODE = False
+
+        if DEBUG_MODE:
+            debug_mode(screen, player_rec)
+
+        
         pygame.display.update()
         clock.tick(60)
     pygame.quit()
 
+def debug_mode(screen, rect):
+    pygame.draw.rect(screen, "red", rect)
 
 if __name__ == "__main__":
     main()
