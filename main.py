@@ -45,6 +45,10 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
+        cam_pos.x = player_rec.centerx - screen.get_width() // 2
+        cam_pos.y = player_rec.centery - screen.get_height() // 2
+        level_offset = player_rec.topleft + cam_pos
+        
         # Update animations
         current_tick = pygame.time.get_ticks()
         if current_tick - last_update >= anim_cd:
@@ -53,21 +57,21 @@ def main():
             if frame >= len(mario_sprites[state]):
                 frame = 0
 
-        if keys[pygame.K_d]:
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             player_pos[0] += player_speed
+            cam_pos.x += player_speed
             state = 1
             direction = "right"
-        elif keys[pygame.K_a]:
+        elif keys[pygame.K_a] or keys[pygame.K_LEFT]:
             player_pos[0] -= player_speed
+            cam_pos.x -= player_speed
             state = 1
             direction = "left"
         else:
             state = 0
             frame = 0
 
-        cam_pos.x = player_rec.centerx - screen.get_width() // 2
-        cam_pos.y = player_rec.centery - screen.get_height() // 2
-        level_offset = player_rec.topleft + cam_pos
+
         # Render sprite
         screen.blit(level1, (0 - level_offset.x ,0))
         pygame.draw.rect(screen, "red", player_rec)
@@ -80,7 +84,7 @@ def main():
             screen.blit(mario_sprites[state][frame], (player_pos[0], player_pos[1]))
 
         # stop the player from moving off screen
-        # player_pos[0] = max(0, min(player_pos[0], screen.get_width() - 16))
+        player_pos[0] = max(0, min(player_pos[0], level1.get_width()))
 
 
         pygame.display.update()
