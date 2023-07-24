@@ -5,10 +5,10 @@ class Load_assets:
         self.filename = os.path.join(filename)
         self.sheet = pygame.image.load("data/"+filename)
 
-    def get_sprites(self, frame: int, w: int, h: int, scale: int) -> pygame.Surface:
+    def get_sprites(self, frame: int, w: int, h: int, scale: int, colorkey=None) -> pygame.Surface:
         """Load sprite sheets so that we can do animations"""
         sprite = pygame.Surface((w, h))
-        sprite.set_colorkey((0, 0, 0))
+        sprite.set_colorkey(colorkey)
         sprite.blit(self.sheet, (0,0), ((frame*w), 0, w, h))
         sprite = pygame.transform.scale(sprite, (w * scale, h * scale))
         return sprite

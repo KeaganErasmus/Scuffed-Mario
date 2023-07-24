@@ -1,5 +1,6 @@
 import pygame
 from load_assets import *
+from blocks import *
 
 mario_sheet = Load_assets("mario_sheet.png")
 level_sheet = Load_assets("bg-1-1.png")
@@ -33,7 +34,7 @@ def main():
     for anim in anim_step:
         temp_sprite_list = []
         for _ in range(anim):
-            temp_sprite_list.append(mario_sheet.get_sprites(step_count, 16, 16, 1))
+            temp_sprite_list.append(mario_sheet.get_sprites(step_count, 16, 16, 1, (0,0,0)))
             step_count += 1
         mario_sprites.append(temp_sprite_list)
 
