@@ -9,9 +9,9 @@ TILE_SIZE = 16
 mario_sheet = Load_assets("mario_sheet.png")
 level_sheet = Load_assets("bg-1-1.png")
 
-f = open("data/world.tmj")
-data = json.load(f)
-f.close()
+# f = open("data/world.tmj")
+# data = json.load(f)
+# f.close()
 
 game_map = [['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
             ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
@@ -36,6 +36,10 @@ def main():
     running = True
 
     DEBUG_MODE = False
+
+    falling = True
+    fall_speed = 3
+    can_jump = True
 
     player_speed = 3
     player_pos = [300, 192]
@@ -63,7 +67,7 @@ def main():
 
     while running:
         player_rec = pygame.Rect(player_pos[0], player_pos[1], 16, 16)
-        screen.fill((255,255,255))
+        screen.fill("#42b6f5")
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -80,6 +84,9 @@ def main():
             last_update = current_tick
             if frame >= len(mario_sprites[state]):
                 frame = 0
+        
+        if falling:
+            player_pos[1] += fall_speed
 
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             player_pos[0] += player_speed
@@ -95,9 +102,12 @@ def main():
             state = 0
             frame = 0
 
+        if keys[pygame.K_SPACE] and can_jump:
+            player_pos[1] -= 20
+
 
         # Render sprite
-        # screen.blit(level1, (0 - level_offset.x ,0))
+        screen.blit(level1, (0 - level_offset.x ,0))
         if direction == "right":
             screen.blit(mario_sprites[state][frame], (player_pos[0], player_pos[1]))
         elif direction == "left":
@@ -109,18 +119,25 @@ def main():
         player_pos[0] = max(0, min(player_pos[0], level1.get_width()))
 
         tile_rects = []
-        y = 0
+        y = 6
         for row in game_map:
-            x = 0
+            x = 10
             for col in row:
                 if col == '1':
                     screen.blit(brick, ((x * TILE_SIZE), (y * TILE_SIZE)))
                 if col == '2':
                     screen.blit(b_block, ((x * TILE_SIZE), (y * TILE_SIZE)))
-                if col != 0:
+                if col != '0':
                     tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
                 x += 1
             y += 1
+        
+        if pygame.Rect.collidelistall(player_rec, tile_rects):
+            falling = False
+            can_jump = True
+        else:
+            falling = True
+            can_jump = False
 
         # render all debug info
         if keys[pygame.K_m]:
@@ -130,6 +147,8 @@ def main():
 
         if DEBUG_MODE:
             debug_mode(screen, player_rec)
+            for rec in tile_rects:
+                pygame.draw.rect(screen, "red", rec)
 
         
         pygame.display.update()
