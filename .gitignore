@@ -1,6 +1,6 @@
-/data
-.tmj
-.tmx
-.tsx
-.tiled-project
-.tiled-session
+/data/*.*
+*.tmj
+*.tmx
+*.tsx
+*.tiled-project
+*.tiled-session
