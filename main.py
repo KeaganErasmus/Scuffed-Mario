@@ -1,6 +1,8 @@
 import pygame
 import json
 
+from pytmx.util_pygame import load_pygame
+
 from load_assets import *
 from blocks import *
 
@@ -9,33 +11,23 @@ TILE_SIZE = 16
 mario_sheet = Load_assets("mario_sheet.png")
 level_sheet = Load_assets("bg-1-1.png")
 
-# f = open("data/world.tmj")
-# data = json.load(f)
-# f.close()
+f = open("data/level-1.tmj")
+data = json.load(f)
+f.close()
 
-game_map = [['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-            ['0','0','0','0','0','0','0','2','2','2','2','2','0','0','0','0','0','0','0'],
-            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
-            ['1','1','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','1','1'],
-            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
-            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
-            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
-            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
-            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
-            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1']]
+level_map = data["layers"][0]["data"]
 
 def main():
     pygame.init()
     clock = pygame.time.Clock()
-    screen = pygame.display.set_mode((600, 400))
-    level = [4000, 500]
+    screen = pygame.display.set_mode((800, 480))
     pygame.display.set_caption("Scuffed mario")
     running = True
 
     DEBUG_MODE = False
+
+    tmx_data = load_pygame("data/level-1.tmx")
+    layer = tmx_data.get_layer_by_name("ground_layer")
 
     falling = True
     fall_speed = 3
@@ -50,11 +42,11 @@ def main():
     last_update = pygame.time.get_ticks()
     anim_cd = 250
     frame = 0
-        
+    
     cam_pos = pygame.math.Vector2()
     direction = "none"
 
-    level1 = level_sheet.load_image("data/bg-1-1.png")
+    # level1 = level_sheet.load_image("data/bg-1-1.png")
 
     # Load all the sprites states (idle, run, jump, dead)
     # and the sprites that match
@@ -85,8 +77,8 @@ def main():
             if frame >= len(mario_sprites[state]):
                 frame = 0
         
-        if falling:
-            player_pos[1] += fall_speed
+        # if falling:
+        #     player_pos[1] += fall_speed
 
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             player_pos[0] += player_speed
@@ -107,7 +99,6 @@ def main():
 
 
         # Render sprite
-        screen.blit(level1, (0 - level_offset.x ,0))
         if direction == "right":
             screen.blit(mario_sprites[state][frame], (player_pos[0], player_pos[1]))
         elif direction == "left":
@@ -116,21 +107,24 @@ def main():
             screen.blit(mario_sprites[state][frame], (player_pos[0], player_pos[1]))
 
         # stop the player from moving off screen
-        player_pos[0] = max(0, min(player_pos[0], level1.get_width()))
+        # player_pos[0] = max(0, min(player_pos[0], level1.get_width()))
 
         tile_rects = []
-        y = 6
-        for row in game_map:
-            x = 10
-            for col in row:
-                if col == '1':
-                    screen.blit(wall, ((x * TILE_SIZE), (y * TILE_SIZE)))
-                if col == '2':
-                    screen.blit(brick, ((x * TILE_SIZE), (y * TILE_SIZE)))
-                if col != '0':
-                    tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
-                x += 1
-            y += 1
+        # y = 6
+        # for row in layer.tiles():
+        #     x = 10
+        #     for col in row:
+        #         if col == '1':
+        #             screen.blit(wall, ((x * TILE_SIZE), (y * TILE_SIZE)))
+        #         if col == '2':
+        #             screen.blit(brick, ((x * TILE_SIZE), (y * TILE_SIZE)))
+        #         if col != '0':
+        #             tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+        #         x += 1
+        #     y += 1
+
+        for x, y, surf in layer.tiles():
+            screen.blit(surf, (x * TILE_SIZE, y * TILE_SIZE))
         
         # Collisions
         if pygame.Rect.collidelistall(player_rec, tile_rects):
