@@ -34,7 +34,7 @@ def main():
     can_jump = True
 
     player_speed = 3
-    player_pos = [300, 192]
+    player_pos = [300, 355]
     mario_sprites = []
     anim_step = [3, 3, 6, 1]
     step_count = 0
