@@ -14,7 +14,6 @@ level_sheet = Load_assets("bg-1-1.png")
 f = open("data/level-1.tmj")
 data = json.load(f)
 f.close()
-
 level_map = data["layers"][0]["data"]
 
 def main():
