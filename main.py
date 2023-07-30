@@ -46,8 +46,6 @@ def main():
     cam_pos = pygame.math.Vector2()
     direction = "none"
 
-    # level1 = level_sheet.load_image("data/bg-1-1.png")
-
     # Load all the sprites states (idle, run, jump, dead)
     # and the sprites that match
     for anim in anim_step:
@@ -77,8 +75,8 @@ def main():
             if frame >= len(mario_sprites[state]):
                 frame = 0
         
-        # if falling:
-        #     player_pos[1] += fall_speed
+        if falling:
+            player_pos[1] += fall_speed
 
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             player_pos[0] += player_speed
@@ -110,19 +108,6 @@ def main():
         # player_pos[0] = max(0, min(player_pos[0], level1.get_width()))
 
         tile_rects = []
-        # y = 6
-        # for row in layer.tiles():
-        #     x = 10
-        #     for col in row:
-        #         if col == '1':
-        #             screen.blit(wall, ((x * TILE_SIZE), (y * TILE_SIZE)))
-        #         if col == '2':
-        #             screen.blit(brick, ((x * TILE_SIZE), (y * TILE_SIZE)))
-        #         if col != '0':
-        #             tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
-        #         x += 1
-        #     y += 1
-
         for x, y, surf in layer.tiles():
             screen.blit(surf, (x * TILE_SIZE, y * TILE_SIZE))
             tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
