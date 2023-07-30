@@ -125,6 +125,7 @@ def main():
 
         for x, y, surf in layer.tiles():
             screen.blit(surf, (x * TILE_SIZE, y * TILE_SIZE))
+            tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
         
         # Collisions
         if pygame.Rect.collidelistall(player_rec, tile_rects):
