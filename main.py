@@ -1,6 +1,7 @@
 import pygame
 import json
 
+
 from pytmx.util_pygame import load_pygame
 
 from load_assets import *
@@ -15,7 +16,6 @@ f = open("data/level-1.tmj")
 data = json.load(f)
 f.close()
 level_map = data["layers"][0]["data"]
-
 def main():
     pygame.init()
     clock = pygame.time.Clock()
@@ -23,10 +23,10 @@ def main():
     pygame.display.set_caption("Scuffed mario")
     running = True
 
-    DEBUG_MODE = False
-
     tmx_data = load_pygame("data/level-1.tmx")
     layer = tmx_data.get_layer_by_name("ground_layer")
+
+    DEBUG_MODE = False
 
     falling = True
     fall_speed = 3
@@ -91,7 +91,7 @@ def main():
             state = 0
             frame = 0
 
-        if keys[pygame.K_SPACE] and can_jump:
+        if keys[pygame.K_SPACE] and can_jump or keys[pygame.K_UP] and can_jump:
             player_pos[1] -= 20
 
 
@@ -106,10 +106,12 @@ def main():
         # stop the player from moving off screen
         # player_pos[0] = max(0, min(player_pos[0], level1.get_width()))
 
+        # Render the world
+        # and add rects to all sprites
         tile_rects = []
         for x, y, surf in layer.tiles():
-            screen.blit(surf, (x * TILE_SIZE, y * TILE_SIZE))
-            tile_rects.append(pygame.Rect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+            screen.blit(surf, ((x * TILE_SIZE) + -level_offset.x, y * TILE_SIZE))
+            tile_rects.append(pygame.Rect((x * TILE_SIZE) + -level_offset.x, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
         
         # Collisions
         if pygame.Rect.collidelistall(player_rec, tile_rects):
@@ -130,7 +132,6 @@ def main():
             for rec in tile_rects:
                 pygame.draw.rect(screen, "red", rec)
 
-        
         pygame.display.update()
         clock.tick(60)
     pygame.quit()
